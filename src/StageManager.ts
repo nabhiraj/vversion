@@ -39,6 +39,6 @@ export class StageManager{
 
     findFilesWithDifference(){
         let allFiles = this.listFiles('.','.vversion')
-        //now we need to calculate the hash of these files.
+        //now we need to calculate the hash of these files.ls
     }
 }
