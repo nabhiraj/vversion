@@ -29,9 +29,10 @@ const fileUtils_1 = require("./../fileUtils");
 const fs = __importStar(require("fs"));
 function applyInit() {
     let bm = new BranchManager_1.BranchManager();
-    if (!fs.statSync('.vversion').isDirectory()) {
+    if (!fs.existsSync('./.vversion')) {
         fs.mkdirSync('.vversion');
     }
+    (0, fileUtils_1.setCurrentDir)();
     if (fileUtils_1.currentDir == null) {
         process.exit();
     }

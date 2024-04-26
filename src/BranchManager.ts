@@ -31,10 +31,6 @@ export class BranchManager {
         createJsonFile('./.vversion/currentBranch.json', data);
     }
 
-    getCurrentBranch(): string {
-        return this.getCurrentBranchName();
-    }
-
     getCurrentBranchName(): string {
         const data = getJsonFromFile('./.vversion/currentBranch.json');
         return data.currentBranchName;

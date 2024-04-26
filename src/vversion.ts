@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { currentDir,setCurrentDir } from './fileUtils';
 import { applyInit } from './commands/init';
+import { getStatus } from './commands/status';
 
 
 
@@ -20,6 +21,8 @@ if (process.argv.length >= 3){
     //now one by one we will write the code to execute the commands which we are supporting for the vversion software.
     if(command == 'init'){
         applyInit();
+    }else if (command == 'status'){
+        getStatus();
     }
 
 
