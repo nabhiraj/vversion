@@ -1,8 +1,6 @@
 import * as fs from 'fs';
-import {getFileNameFromBranch,getJsonFromFile,createJsonFile} from './fileUtils';
-interface CommonData {
-    currentDir: string;
-}
+import {getFileNameFromBranch,getJsonFromFile,createJsonFile,currentDir} from './fileUtils';
+
 
 interface Data {
     version: number;
@@ -11,16 +9,10 @@ interface Data {
 
 
 
-class BranchManager {
-    commonData: CommonData;
-
-    constructor(commonData: CommonData) {
-        this.commonData = commonData;
-    }
+export class BranchManager {
 
     branchExist(branchName: string): boolean {
-        console.log('the value of common data is ', this.commonData.currentDir);
-        const branchFilePath = `${this.commonData.currentDir}/.vversion/${branchName}_branch.json`;
+        const branchFilePath = `${currentDir}/.vversion/${branchName}_branch.json`;
         return fs.existsSync(branchFilePath);
     }
 

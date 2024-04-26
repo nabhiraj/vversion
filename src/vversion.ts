@@ -2,22 +2,28 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { currentDir,setCurrentDir } from './fileUtils';
+import { applyInit } from './commands/init';
 
-function getStartingDirectory(): string | null {
-    let currentDir: string = process.cwd();
-    while (true) {
-        if (fs.existsSync(path.join(currentDir, '.vversion'))) {
-            return currentDir;
-        } else {
-            let parentDir: string = path.dirname(currentDir);
-            if (parentDir === currentDir) { // Check if it's the root directory
-                return null;
-            } else {
-                process.chdir(parentDir);
-                currentDir = parentDir;
-            }
+
+
+if (process.argv.length >= 3){
+    let command = process.argv[2];
+    if(command != 'init'){
+        setCurrentDir();
+        if(currentDir == null){
+            console.log('no version related information found');
+            process.exit(0);
         }
     }
-}
 
-console.log(getStartingDirectory())
+    //now one by one we will write the code to execute the commands which we are supporting for the vversion software.
+    if(command == 'init'){
+        applyInit();
+    }
+
+
+
+}else{
+    console.log('acha se argument daalo bhai....');
+}
