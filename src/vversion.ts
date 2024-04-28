@@ -23,6 +23,8 @@ if (process.argv.length >= 3){
         applyInit();
     }else if (command == 'status'){
         getStatus();
+    }else if (command == 'add' ){
+        //this is the command for a adding a file in staging area.
     }
 
 

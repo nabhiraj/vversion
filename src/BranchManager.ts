@@ -3,7 +3,7 @@ import {getFileNameFromBranch,getJsonFromFile,createJsonFile,currentDir} from '.
 
 
 interface Data {
-    version: number;
+    IndexCounter: number;
     commits: any[];
 }
 
@@ -11,13 +11,15 @@ interface Data {
 
 export class BranchManager {
 
+
+
     branchExist(branchName: string): boolean {
         const branchFilePath = `${currentDir}/.vversion/${branchName}_branch.json`;
         return fs.existsSync(branchFilePath);
     }
 
     createBranch(targetBranch: string, srcBranch: string | null = 'main'): boolean {
-        let data: Data = { version: 0, commits: [] };
+        let data: Data = { IndexCounter: 0, commits: [] };
         if (srcBranch !== null) {
             const srcBranchFile = getFileNameFromBranch(srcBranch);
             data = getJsonFromFile(srcBranchFile);
@@ -35,4 +37,26 @@ export class BranchManager {
         const data = getJsonFromFile('./.vversion/currentBranch.json');
         return data.currentBranchName;
     }
+
+    getBranchInfo(){
+        return getJsonFromFile(getFileNameFromBranch(this.getCurrentBranchName()));
+    }
+
+    setBranchInfo(data:any){
+        createJsonFile(this.getCurrentBranchName()+'_branchg.json', data);
+    }
+
+    getNextIndex(){
+        let data = this.getBranchInfo();
+        let count = data.IndexCounter;
+        data.IndexCounter++;
+        this.setBranchInfo(data);
+        return count;
+    }
+
+    getNextDiffFileName(){
+        let index = this.getNextIndex();
+        return this.getCurrentBranchName()+'_diff_'+index;
+    }
+
 }
