@@ -23,9 +23,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createJsonFile = exports.getJsonFromFile = exports.getFileNameFromBranch = exports.setCurrentDir = exports.getStartingDirectory = exports.currentDir = void 0;
+exports.addDiffFile = exports.createDiffFile = exports.getHash = exports.createJsonFile = exports.getJsonFromFile = exports.getFileNameFromBranch = exports.setCurrentDir = exports.getStartingDirectory = exports.currentDir = void 0;
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
+const crypto = __importStar(require("crypto"));
+const child_process_1 = require("child_process");
 exports.currentDir = '';
 function getStartingDirectory() {
     let currentDir = process.cwd();
@@ -81,3 +83,52 @@ function createJsonFile(filePath, data) {
     }
 }
 exports.createJsonFile = createJsonFile;
+function getHash(filePath) {
+    const fileData = fs.readFileSync(filePath);
+    const hash = crypto.createHash('md5');
+    hash.update(fileData);
+    return hash.digest('hex');
+}
+exports.getHash = getHash;
+function createDiffFile(initialFilePath, changedFilePath, targetFilePath) {
+    let tempFileName = null;
+    if (initialFilePath === null) {
+        tempFileName = 'empty_old_file_782196.txt';
+        createEmptyFile(tempFileName);
+        initialFilePath = tempFileName;
+    }
+    let output;
+    try {
+        const command = `diff ${initialFilePath} ${changedFilePath}`;
+        output = (0, child_process_1.execSync)(command, { encoding: 'utf-8' }); // Redirect stdout to pipe to avoid throwing errors
+    }
+    catch (error) {
+        if (error.status !== 1) { // 1 indicates differences, treat this as expected
+            console.error('Error occurred while executing diff command:', error);
+        }
+        else {
+            fs.writeFileSync(targetFilePath, error.stdout);
+        }
+    }
+    finally {
+        if (tempFileName !== null) {
+            fs.unlinkSync(tempFileName);
+        }
+    }
+}
+exports.createDiffFile = createDiffFile;
+function createEmptyFile(filePath) {
+    const directory = path.dirname(filePath);
+    if (!fs.existsSync(directory)) {
+        fs.mkdirSync(directory, { recursive: true });
+    }
+    fs.writeFileSync(filePath, '');
+}
+function addDiffFile(filePath, diffFilePath) {
+    if (!fs.existsSync(filePath)) {
+        createEmptyFile(filePath);
+    }
+    const command = `patch ${filePath} ${diffFilePath}`;
+    (0, child_process_1.execSync)(command);
+}
+exports.addDiffFile = addDiffFile;

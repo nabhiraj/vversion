@@ -29,9 +29,9 @@ const path = __importStar(require("path"));
 const fileUtils_1 = require("./fileUtils");
 class StageManager {
     constructor() {
-        this.statePath = './.vversion/stage/state.json';
-        this.stageDirPath = './.vversion/stage';
+        this.statePath = './.vversion/state.json';
     }
+    //stageDirPath:string = './.vversion/stage';
     listFiles(dir, exludeDir) {
         let files = [];
         const dirContents = fs.readdirSync(dir);
@@ -49,20 +49,55 @@ class StageManager {
         });
         return files;
     }
-    loadStage() {
+    initStage() {
         if (fs.existsSync(this.statePath)) {
             this.state = (0, fileUtils_1.getJsonFromFile)(this.statePath);
             console.log('ths state something looks like this', this.state);
         }
         else {
-            this.state = {};
-            fs.mkdirSync(this.stageDirPath, { recursive: true });
+            this.state = {}; //we should get it from the privious commit
+            //fs.mkdirSync(this.stageDirPath, { recursive: true });
             (0, fileUtils_1.createJsonFile)(this.statePath, this.state);
         }
     }
-    findFilesWithDifference() {
+    getFilesStatus() {
         let allFiles = this.listFiles('.', '.vversion');
-        console.log('here are all the files', allFiles);
+        //now we need to calculate the hash of these files.ls
+        let filesChanges = [];
+        let filesNotChanged = [];
+        let filesDeleted = [];
+        for (let i = 0; i < allFiles.length; i++) {
+            let file = allFiles[i];
+            if (!this.state[file] || (this.state[file] && this.state[file].lastHash != (0, fileUtils_1.getHash)(file))) {
+                filesChanges.push(file);
+            }
+            else {
+                filesNotChanged.push(file);
+            }
+        }
+        //now we need to find the files which we are about to delete.
+        for (let key in this.state) {
+            if (!allFiles.includes(key)) {
+                filesDeleted.push(key);
+            }
+        }
+        return { 'changed': filesChanges, 'nochange': filesNotChanged, 'deleted': filesDeleted };
+    }
+    addFile(filePath) {
+        if (fs.existsSync(filePath)) {
+            let newHash = (0, fileUtils_1.getHash)(filePath);
+            if (this.state[filePath] && this.state[filePath].lastHash == newHash)
+                return false;
+            if (!this.state[filePath]) {
+                //its a new file
+            }
+            else {
+                //its a change in the old file
+            }
+        }
+        else {
+            return false;
+        }
     }
 }
 exports.StageManager = StageManager;
