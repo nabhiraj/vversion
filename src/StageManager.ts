@@ -40,6 +40,10 @@ export class StageManager{
         }
     }
 
+    flushState(){
+        createJsonFile(this.statePath,this.state);
+    }
+
     getFilesStatus(){
         let allFiles = this.listFiles('.','.vversion');
         let filesChanges = [];
@@ -66,11 +70,16 @@ export class StageManager{
             let newHash = getHash(filePath);
             if (this.state[filePath] && this.state[filePath].lastHash == newHash) return false; //this file do not have any change
             if(!this.state[filePath]){ //here we are adding a new file
-                //lets creaate the diff file
+                console.log('need to add new file');
                 let bm = new BranchManager();
-                createDiffFile(null,filePath,'./.vversion/'+bm.getNextDiffFileName());
+                let diffFileName = bm.getNextDiffFileName();
+                createDiffFile(null,filePath,'./.vversion/'+diffFileName);
+                this.state[filePath] = {"lastHash":newHash,"diffs":[],"stageDiff":[diffFileName]}
+                this.flushState();
             }else{
                 //its a change in the old file
+                console.log('need to change the existing file');
+                //this we will work tomm.
             }
             
         }else{

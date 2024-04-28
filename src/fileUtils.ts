@@ -24,6 +24,10 @@ export function getStartingDirectory(): string | null {
 
 export function setCurrentDir(){
     currentDir = getStartingDirectory();
+    if(currentDir == null){
+        console.log('no version related information found');
+        process.exit(0);
+    }
 }
 
 export function getFileNameFromBranch(srcBranch: string): string {
@@ -72,10 +76,13 @@ export function createDiffFile(initialFilePath:string|null,changedFilePath:strin
     try {
         const command = `diff ${initialFilePath} ${changedFilePath}`;
         output = execSync(command, { encoding: 'utf-8' }); // Redirect stdout to pipe to avoid throwing errors
+        console.log('the output value is ',output);
+        fs.writeFileSync(targetFilePath,'');
     } catch (error:any) {
         if (error.status !== 1) { // 1 indicates differences, treat this as expected
-            console.error('Error occurred while executing diff command:', error);
+            console.log('error in diff');
         }else{
+            console.log('writing to the file');
             fs.writeFileSync(targetFilePath, error.stdout);
         }
     } finally {

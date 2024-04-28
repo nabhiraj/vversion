@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addDiffFile = exports.createDiffFile = exports.getHash = exports.createJsonFile = exports.getJsonFromFile = exports.getFileNameFromBranch = exports.setCurrentDir = exports.getStartingDirectory = exports.currentDir = void 0;
+exports.constructFileFromDiffArray = exports.addDiffFile = exports.createDiffFile = exports.getHash = exports.createJsonFile = exports.getJsonFromFile = exports.getFileNameFromBranch = exports.setCurrentDir = exports.getStartingDirectory = exports.currentDir = void 0;
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const crypto = __importStar(require("crypto"));
@@ -50,6 +50,10 @@ function getStartingDirectory() {
 exports.getStartingDirectory = getStartingDirectory;
 function setCurrentDir() {
     exports.currentDir = getStartingDirectory();
+    if (exports.currentDir == null) {
+        console.log('no version related information found');
+        process.exit(0);
+    }
 }
 exports.setCurrentDir = setCurrentDir;
 function getFileNameFromBranch(srcBranch) {
@@ -101,12 +105,15 @@ function createDiffFile(initialFilePath, changedFilePath, targetFilePath) {
     try {
         const command = `diff ${initialFilePath} ${changedFilePath}`;
         output = (0, child_process_1.execSync)(command, { encoding: 'utf-8' }); // Redirect stdout to pipe to avoid throwing errors
+        console.log('the output value is ', output);
+        fs.writeFileSync(targetFilePath, '');
     }
     catch (error) {
         if (error.status !== 1) { // 1 indicates differences, treat this as expected
-            console.error('Error occurred while executing diff command:', error);
+            console.log('error in diff');
         }
         else {
+            console.log('writing to the file');
             fs.writeFileSync(targetFilePath, error.stdout);
         }
     }
@@ -132,3 +139,16 @@ function addDiffFile(filePath, diffFilePath) {
     (0, child_process_1.execSync)(command);
 }
 exports.addDiffFile = addDiffFile;
+function constructFileFromDiffArray(diffFileList, targetPath) {
+    try {
+        for (let i = 0; i < diffFileList.length; i++) {
+            addDiffFile(targetPath, diffFileList[i]);
+        }
+        return true;
+    }
+    catch (e) {
+        console.error('error occured while joing the dif files', e);
+        return false;
+    }
+}
+exports.constructFileFromDiffArray = constructFileFromDiffArray;

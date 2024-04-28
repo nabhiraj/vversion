@@ -32,7 +32,7 @@ class BranchManager {
         return fs.existsSync(branchFilePath);
     }
     createBranch(targetBranch, srcBranch = 'main') {
-        let data = { version: 0, commits: [] };
+        let data = { IndexCounter: 0, commits: [] };
         if (srcBranch !== null) {
             const srcBranchFile = (0, fileUtils_1.getFileNameFromBranch)(srcBranch);
             data = (0, fileUtils_1.getJsonFromFile)(srcBranchFile);
@@ -47,6 +47,23 @@ class BranchManager {
     getCurrentBranchName() {
         const data = (0, fileUtils_1.getJsonFromFile)('./.vversion/currentBranch.json');
         return data.currentBranchName;
+    }
+    getBranchInfo() {
+        return (0, fileUtils_1.getJsonFromFile)((0, fileUtils_1.getFileNameFromBranch)(this.getCurrentBranchName()));
+    }
+    setBranchInfo(data) {
+        (0, fileUtils_1.createJsonFile)((0, fileUtils_1.getFileNameFromBranch)(this.getCurrentBranchName()), data);
+    }
+    getNextIndex() {
+        let data = this.getBranchInfo();
+        let count = data.IndexCounter;
+        data.IndexCounter++;
+        this.setBranchInfo(data);
+        return count;
+    }
+    getNextDiffFileName() {
+        let index = this.getNextIndex();
+        return this.getCurrentBranchName() + '_diff_' + index;
     }
 }
 exports.BranchManager = BranchManager;

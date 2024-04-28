@@ -5,26 +5,20 @@ import * as path from 'path';
 import { currentDir,setCurrentDir } from './fileUtils';
 import { applyInit } from './commands/init';
 import { getStatus } from './commands/status';
+import {addResource} from './commands/addResource';
 
 
 
 if (process.argv.length >= 3){
     let command = process.argv[2];
-    if(command != 'init'){
-        setCurrentDir();
-        if(currentDir == null){
-            console.log('no version related information found');
-            process.exit(0);
-        }
-    }
-
     //now one by one we will write the code to execute the commands which we are supporting for the vversion software.
     if(command == 'init'){
         applyInit();
     }else if (command == 'status'){
+        setCurrentDir();
         getStatus();
     }else if (command == 'add' ){
-        //this is the command for a adding a file in staging area.
+        addResource();
     }
 
 

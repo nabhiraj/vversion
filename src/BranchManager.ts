@@ -43,7 +43,7 @@ export class BranchManager {
     }
 
     setBranchInfo(data:any){
-        createJsonFile(this.getCurrentBranchName()+'_branchg.json', data);
+        createJsonFile(getFileNameFromBranch(this.getCurrentBranchName()), data);
     }
 
     getNextIndex(){
