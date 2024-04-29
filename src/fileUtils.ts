@@ -76,13 +76,11 @@ export function createDiffFile(initialFilePath:string|null,changedFilePath:strin
     try {
         const command = `diff ${initialFilePath} ${changedFilePath}`;
         output = execSync(command, { encoding: 'utf-8' }); // Redirect stdout to pipe to avoid throwing errors
-        console.log('the output value is ',output);
         fs.writeFileSync(targetFilePath,'');
     } catch (error:any) {
         if (error.status !== 1) { // 1 indicates differences, treat this as expected
             console.log('error in diff');
         }else{
-            console.log('writing to the file');
             fs.writeFileSync(targetFilePath, error.stdout);
         }
     } finally {
@@ -110,6 +108,9 @@ export function addDiffFile(filePath:string,diffFilePath:string){
 
 export function constructFileFromDiffArray(diffFileList:string[],targetPath:string):boolean{
     try{
+        if (!fs.existsSync(targetPath)) {
+            createEmptyFile(targetPath);
+        }
         for(let i=0;i<diffFileList.length;i++){
             addDiffFile(targetPath,diffFileList[i]);
         }
@@ -119,5 +120,3 @@ export function constructFileFromDiffArray(diffFileList:string[],targetPath:stri
         return false;
     }
 }
-
-

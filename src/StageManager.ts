@@ -68,24 +68,31 @@ export class StageManager{
     addFile(filePath:string){
         if(fs.existsSync(filePath)){
             let newHash = getHash(filePath);
-            if (this.state[filePath] && this.state[filePath].lastHash == newHash) return false; //this file do not have any change
-            if(!this.state[filePath]){ //here we are adding a new file
-                console.log('need to add new file');
-                let bm = new BranchManager();
-                let diffFileName = bm.getNextDiffFileName();
+            if (this.state[filePath] && this.state[filePath].lastHash == newHash) return false;
+            let bm = new BranchManager();
+            let diffFileName = bm.getNextDiffFileName();
+            if(!this.state[filePath]){
                 createDiffFile(null,filePath,'./.vversion/'+diffFileName);
                 this.state[filePath] = {"lastHash":newHash,"diffs":[],"stageDiff":[diffFileName]}
-                this.flushState();
             }else{
-                //its a change in the old file
-                console.log('need to change the existing file');
-                //this we will work tomm.
+                let diffArr = JSON.parse(JSON.stringify(this.state[filePath].diffs));
+                let previousDiffFileName = this.state[filePath].stageDiff[0];
+                constructFileFromDiffArray(diffArr,'./.vversion/temp988');
+                createDiffFile('./.vversion/temp988',filePath,'./.vversion/'+diffFileName);
+                this.state[filePath].lastHash = newHash;
+                this.state[filePath].stageDiff = [diffFileName];
+                fs.unlinkSync('./.vversion/temp988');
+                fs.unlinkSync('./.vversion/'+previousDiffFileName);
             }
-            
+            this.flushState();
         }else{
-            //this could be a deleted file. we need to handle this case
             return false;
         }
+    }
+
+    //we have to write the code to rollback all the changes.
+    rollBackAllChanges(){
+
     }
 
 }

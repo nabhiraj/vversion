@@ -141,6 +141,9 @@ function addDiffFile(filePath, diffFilePath) {
 exports.addDiffFile = addDiffFile;
 function constructFileFromDiffArray(diffFileList, targetPath) {
     try {
+        if (!fs.existsSync(targetPath)) {
+            createEmptyFile(targetPath);
+        }
         for (let i = 0; i < diffFileList.length; i++) {
             addDiffFile(targetPath, diffFileList[i]);
         }
