@@ -22,6 +22,22 @@ export class StageManager{
         });
         return files;
     }
+
+    setState(state:any){
+        this.state = state;
+    }
+
+    flushState(){
+        createJsonFile(this.statePath,this.state);
+    }
+
+    getStateCopy(){
+        return JSON.parse(JSON.stringify(this.state));
+    }
+
+    getState(){
+        return this.state;
+    }
     
     initStage(){
         if(fs.existsSync(this.statePath)){
@@ -38,10 +54,6 @@ export class StageManager{
             } 
             createJsonFile(this.statePath, this.state);
         }
-    }
-
-    flushState(){
-        createJsonFile(this.statePath,this.state);
     }
 
     getFilesStatus(){
@@ -76,23 +88,32 @@ export class StageManager{
                 this.state[filePath] = {"lastHash":newHash,"diffs":[],"stageDiff":[diffFileName]}
             }else{
                 let diffArr = JSON.parse(JSON.stringify(this.state[filePath].diffs));
-                let previousDiffFileName = this.state[filePath].stageDiff[0];
+                diffArr = diffArr.map( (x:any) => './.vversion/'+x);
+                let previousDiffFileName = null;
+                if (this.state[filePath].stageDiff.length > 0){
+                    previousDiffFileName = this.state[filePath].stageDiff[0];
+                }
                 constructFileFromDiffArray(diffArr,'./.vversion/temp988');
                 createDiffFile('./.vversion/temp988',filePath,'./.vversion/'+diffFileName);
                 this.state[filePath].lastHash = newHash;
                 this.state[filePath].stageDiff = [diffFileName];
                 fs.unlinkSync('./.vversion/temp988');
-                fs.unlinkSync('./.vversion/'+previousDiffFileName);
+                if(previousDiffFileName != null){
+                    fs.unlinkSync('./.vversion/'+previousDiffFileName);
+                }
             }
             this.flushState();
         }else{
+            if(this.state[filePath]){
+                delete this.state[filePath];
+                this.flushState();
+            }else{
+                console.log('some input is wrong');
+            }
             return false;
         }
     }
 
-    //we have to write the code to rollback all the changes.
-    rollBackAllChanges(){
-
-    }
+    
 
 }

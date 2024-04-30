@@ -1,17 +1,13 @@
 import * as fs from 'fs';
 import {getFileNameFromBranch,getJsonFromFile,createJsonFile,currentDir} from './fileUtils';
-
+import { StageManager } from './StageManager';
 
 interface Data {
     IndexCounter: number;
     commits: any[];
 }
 
-
-
 export class BranchManager {
-
-
 
     branchExist(branchName: string): boolean {
         const branchFilePath = `${currentDir}/.vversion/${branchName}_branch.json`;
@@ -57,6 +53,32 @@ export class BranchManager {
     getNextDiffFileName(){
         let index = this.getNextIndex();
         return this.getCurrentBranchName()+'_diff_'+index;
+    }
+
+    createCommit(commitMessage = 'default commit message'){
+        let sm = new StageManager();
+        sm.initStage();
+        let state = sm.getStateCopy();
+        for (let key in state){
+            if(state[key].stageDiff.length > 0){
+                state[key].diffs.push(state[key].stageDiff[0]);
+            }
+            delete state[key].stageDiff;
+        }
+        let branchInfo = this.getBranchInfo();
+        let lastCommit = {
+            "commitVersion": this.getNextIndex(),
+            "commitMessage": commitMessage,
+            "files": state
+        };
+        branchInfo.commits.push(lastCommit);
+        this.setBranchInfo(branchInfo);
+        let newState = branchInfo.commits[branchInfo.commits.length-1].files;
+        for(let key in newState){
+            newState[key].stageDiff = []
+        }
+        sm.setState(newState);
+        sm.flushState();
     }
 
 }

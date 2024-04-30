@@ -6,6 +6,7 @@ import { currentDir,setCurrentDir } from './fileUtils';
 import { applyInit } from './commands/init';
 import { getStatus } from './commands/status';
 import {addResource} from './commands/addResource';
+import { createCommit } from './commands/createCommit';
 
 
 
@@ -17,9 +18,12 @@ if (process.argv.length >= 3){
     }else if (command == 'status'){
         setCurrentDir();
         getStatus();
-    }else if (command == 'add' ){
+    }else if (command == 'add'){
         addResource();
-    }
+    }else if (command == 'commit'){
+        setCurrentDir();
+        createCommit();
+    } 
 
 
 

@@ -1,10 +1,14 @@
 {
-    "version": 0,
-    "commits": [{"commitVersion": "randomeVersion",
-    "files": {
-        "fileName1" : {"lastHash":"value","diffs":["diff1","diff2"]},
-        "fileName2" : {"lastHash":"value","diffs":["diff122","diff23"]},
-        "fileName3" : {"lastHash":"value","diffs":["diff11"]}
-    }}]
+    "IndexCounter": 0,
+    "commits": [{
+        "commitVersion": "randomeVersion",
+        "commitMessage": "randomMessage",
+        "files": {
+            "fileName1" : {"lastHash":"value","diffs":["diff1","diff2"]},
+            "fileName2" : {"lastHash":"value","diffs":["diff122","diff23"]},
+            "fileName3" : {"lastHash":"value","diffs":["diff11"]}
+                }
+            }
+        ]
 }
 
