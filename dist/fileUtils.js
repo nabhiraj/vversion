@@ -105,7 +105,6 @@ function createDiffFile(initialFilePath, changedFilePath, targetFilePath) {
     try {
         const command = `diff ${initialFilePath} ${changedFilePath}`;
         output = (0, child_process_1.execSync)(command, { encoding: 'utf-8' }); // Redirect stdout to pipe to avoid throwing errors
-        console.log('the output value is ', output);
         fs.writeFileSync(targetFilePath, '');
     }
     catch (error) {
@@ -113,7 +112,6 @@ function createDiffFile(initialFilePath, changedFilePath, targetFilePath) {
             console.log('error in diff');
         }
         else {
-            console.log('writing to the file');
             fs.writeFileSync(targetFilePath, error.stdout);
         }
     }

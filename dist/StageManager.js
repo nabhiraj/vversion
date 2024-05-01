@@ -49,6 +49,18 @@ class StageManager {
         });
         return files;
     }
+    setState(state) {
+        this.state = state;
+    }
+    flushState() {
+        (0, fileUtils_1.createJsonFile)(this.statePath, this.state);
+    }
+    getStateCopy() {
+        return JSON.parse(JSON.stringify(this.state));
+    }
+    getState() {
+        return this.state;
+    }
     initStage() {
         if (fs.existsSync(this.statePath)) {
             this.state = (0, fileUtils_1.getJsonFromFile)(this.statePath);
@@ -65,9 +77,6 @@ class StageManager {
             }
             (0, fileUtils_1.createJsonFile)(this.statePath, this.state);
         }
-    }
-    flushState() {
-        (0, fileUtils_1.createJsonFile)(this.statePath, this.state);
     }
     getFilesStatus() {
         let allFiles = this.listFiles('.', '.vversion');
@@ -103,18 +112,30 @@ class StageManager {
             }
             else {
                 let diffArr = JSON.parse(JSON.stringify(this.state[filePath].diffs));
-                let previousDiffFileName = this.state[filePath].stageDiff[0];
-                console.log('the diffArr is ', diffArr);
+                diffArr = diffArr.map((x) => './.vversion/' + x);
+                let previousDiffFileName = null;
+                if (this.state[filePath].stageDiff.length > 0) {
+                    previousDiffFileName = this.state[filePath].stageDiff[0];
+                }
                 (0, fileUtils_1.constructFileFromDiffArray)(diffArr, './.vversion/temp988');
                 (0, fileUtils_1.createDiffFile)('./.vversion/temp988', filePath, './.vversion/' + diffFileName);
                 this.state[filePath].lastHash = newHash;
                 this.state[filePath].stageDiff = [diffFileName];
                 fs.unlinkSync('./.vversion/temp988');
-                fs.unlinkSync('./.vversion/' + previousDiffFileName);
+                if (previousDiffFileName != null) {
+                    fs.unlinkSync('./.vversion/' + previousDiffFileName);
+                }
             }
             this.flushState();
         }
         else {
+            if (this.state[filePath]) {
+                delete this.state[filePath];
+                this.flushState();
+            }
+            else {
+                console.log('some input is wrong');
+            }
             return false;
         }
     }

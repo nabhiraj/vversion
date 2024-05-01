@@ -5,6 +5,7 @@ const fileUtils_1 = require("./fileUtils");
 const init_1 = require("./commands/init");
 const status_1 = require("./commands/status");
 const addResource_1 = require("./commands/addResource");
+const createCommit_1 = require("./commands/createCommit");
 if (process.argv.length >= 3) {
     let command = process.argv[2];
     //now one by one we will write the code to execute the commands which we are supporting for the vversion software.
@@ -17,6 +18,10 @@ if (process.argv.length >= 3) {
     }
     else if (command == 'add') {
         (0, addResource_1.addResource)();
+    }
+    else if (command == 'commit') {
+        (0, fileUtils_1.setCurrentDir)();
+        (0, createCommit_1.createCommit)();
     }
 }
 else {

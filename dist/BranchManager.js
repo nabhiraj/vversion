@@ -26,6 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BranchManager = void 0;
 const fs = __importStar(require("fs"));
 const fileUtils_1 = require("./fileUtils");
+const StageManager_1 = require("./StageManager");
 class BranchManager {
     branchExist(branchName) {
         const branchFilePath = `${fileUtils_1.currentDir}/.vversion/${branchName}_branch.json`;
@@ -64,6 +65,31 @@ class BranchManager {
     getNextDiffFileName() {
         let index = this.getNextIndex();
         return this.getCurrentBranchName() + '_diff_' + index;
+    }
+    createCommit(commitMessage = 'default commit message') {
+        let sm = new StageManager_1.StageManager();
+        sm.initStage();
+        let state = sm.getStateCopy();
+        for (let key in state) {
+            if (state[key].stageDiff.length > 0) {
+                state[key].diffs.push(state[key].stageDiff[0]);
+            }
+            delete state[key].stageDiff;
+        }
+        let branchInfo = this.getBranchInfo();
+        let lastCommit = {
+            "commitVersion": this.getNextIndex(),
+            "commitMessage": commitMessage,
+            "files": state
+        };
+        branchInfo.commits.push(lastCommit);
+        this.setBranchInfo(branchInfo);
+        let newState = branchInfo.commits[branchInfo.commits.length - 1].files;
+        for (let key in newState) {
+            newState[key].stageDiff = [];
+        }
+        sm.setState(newState);
+        sm.flushState();
     }
 }
 exports.BranchManager = BranchManager;
