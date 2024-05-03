@@ -7,12 +7,13 @@ import { applyInit } from './commands/init';
 import { getStatus } from './commands/status';
 import {addResource} from './commands/addResource';
 import { createCommit } from './commands/createCommit';
+import { viewLogs } from './commands/viewLogs';
+import { revert } from './commands/revertCommit';
 
 
 
 if (process.argv.length >= 3){
     let command = process.argv[2];
-    //now one by one we will write the code to execute the commands which we are supporting for the vversion software.
     if(command == 'init'){
         applyInit();
     }else if (command == 'status'){
@@ -23,7 +24,17 @@ if (process.argv.length >= 3){
     }else if (command == 'commit'){
         setCurrentDir();
         createCommit();
-    } 
+    }else if (command == 'logs'){
+        setCurrentDir();
+        viewLogs();
+    }else if(command == 'revert'){
+        setCurrentDir();
+        if(process.argv.length == 4 && !isNaN(parseInt(process.argv[3]))){
+            revert(parseInt(process.argv[3]));
+        }else{
+            console.log('issue with input format');
+        }
+    }
 
 
 

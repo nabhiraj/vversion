@@ -6,9 +6,10 @@ const init_1 = require("./commands/init");
 const status_1 = require("./commands/status");
 const addResource_1 = require("./commands/addResource");
 const createCommit_1 = require("./commands/createCommit");
+const viewLogs_1 = require("./commands/viewLogs");
+const revertCommit_1 = require("./commands/revertCommit");
 if (process.argv.length >= 3) {
     let command = process.argv[2];
-    //now one by one we will write the code to execute the commands which we are supporting for the vversion software.
     if (command == 'init') {
         (0, init_1.applyInit)();
     }
@@ -22,6 +23,19 @@ if (process.argv.length >= 3) {
     else if (command == 'commit') {
         (0, fileUtils_1.setCurrentDir)();
         (0, createCommit_1.createCommit)();
+    }
+    else if (command == 'logs') {
+        (0, fileUtils_1.setCurrentDir)();
+        (0, viewLogs_1.viewLogs)();
+    }
+    else if (command == 'revert') {
+        (0, fileUtils_1.setCurrentDir)();
+        if (process.argv.length == 4 && !isNaN(parseInt(process.argv[3]))) {
+            (0, revertCommit_1.revert)(parseInt(process.argv[3]));
+        }
+        else {
+            console.log('issue with input format');
+        }
     }
 }
 else {

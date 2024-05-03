@@ -120,3 +120,37 @@ export function constructFileFromDiffArray(diffFileList:string[],targetPath:stri
         return false;
     }
 }
+
+export function listFiles(dir: string,exludeDir:string): string[] {
+    let files: string[] = [];
+    const dirContents = fs.readdirSync(dir);
+    dirContents.forEach(item => {
+        const itemPath = path.join(dir, item);
+        const stat = fs.statSync(itemPath);
+        if (stat.isDirectory()) {
+            if(item != exludeDir){
+                files = files.concat(listFiles(itemPath,exludeDir));
+            }
+        } else {
+            files.push(itemPath);
+        }
+    });
+    return files;
+}
+
+export function deleteDirectoriesExceptSync(dirToKeep: string): void {
+    try {
+        const files = fs.readdirSync('.');
+        for (const file of files) {
+            const stats = fs.statSync(file);
+            if (stats.isDirectory() && file !== dirToKeep) {
+                console.log('removing following direcotry' , file);
+                fs.rmSync(file, { recursive: true });
+                console.log(`Deleted directory: ${file}`);
+            }
+        }
+        console.log("All directories deleted except for the specified one.");
+    } catch (error) {
+        console.error("Error occurred while deleting directories:", error);
+    }
+}

@@ -25,30 +25,29 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StageManager = void 0;
 const fs = __importStar(require("fs"));
-const path = __importStar(require("path"));
 const fileUtils_1 = require("./fileUtils");
 const BranchManager_1 = require("./BranchManager");
 class StageManager {
     constructor() {
         this.statePath = './.vversion/state.json';
     }
-    listFiles(dir, exludeDir) {
-        let files = [];
+    /*
+    listFiles(dir: string,exludeDir:string): string[] {
+        let files: string[] = [];
         const dirContents = fs.readdirSync(dir);
         dirContents.forEach(item => {
             const itemPath = path.join(dir, item);
             const stat = fs.statSync(itemPath);
             if (stat.isDirectory()) {
-                if (item != exludeDir) {
-                    files = files.concat(this.listFiles(itemPath, exludeDir));
+                if(item != exludeDir){
+                    files = files.concat(this.listFiles(itemPath,exludeDir));
                 }
-            }
-            else {
+            } else {
                 files.push(itemPath);
             }
         });
         return files;
-    }
+    }*/
     setState(state) {
         this.state = state;
     }
@@ -79,7 +78,7 @@ class StageManager {
         }
     }
     getFilesStatus() {
-        let allFiles = this.listFiles('.', '.vversion');
+        let allFiles = (0, fileUtils_1.listFiles)('.', '.vversion');
         let filesChanges = [];
         let filesNotChanged = [];
         let filesDeleted = [];

@@ -1,11 +1,11 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { getJsonFromFile,createJsonFile,getHash,getFileNameFromBranch,constructFileFromDiffArray,createDiffFile} from './fileUtils';
+import { getJsonFromFile,createJsonFile,getHash,getFileNameFromBranch,constructFileFromDiffArray,createDiffFile,listFiles} from './fileUtils';
 import { BranchManager } from './BranchManager';
 export class StageManager{
     state:any;
     statePath:string = './.vversion/state.json';
-
+    /*
     listFiles(dir: string,exludeDir:string): string[] {
         let files: string[] = [];
         const dirContents = fs.readdirSync(dir);
@@ -21,7 +21,7 @@ export class StageManager{
             }
         });
         return files;
-    }
+    }*/
 
     setState(state:any){
         this.state = state;
@@ -57,7 +57,7 @@ export class StageManager{
     }
 
     getFilesStatus(){
-        let allFiles = this.listFiles('.','.vversion');
+        let allFiles = listFiles('.','.vversion');
         let filesChanges = [];
         let filesNotChanged = [];
         let filesDeleted = [];

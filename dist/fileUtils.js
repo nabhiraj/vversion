@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.constructFileFromDiffArray = exports.addDiffFile = exports.createDiffFile = exports.getHash = exports.createJsonFile = exports.getJsonFromFile = exports.getFileNameFromBranch = exports.setCurrentDir = exports.getStartingDirectory = exports.currentDir = void 0;
+exports.deleteDirectoriesExceptSync = exports.listFiles = exports.constructFileFromDiffArray = exports.addDiffFile = exports.createDiffFile = exports.getHash = exports.createJsonFile = exports.getJsonFromFile = exports.getFileNameFromBranch = exports.setCurrentDir = exports.getStartingDirectory = exports.currentDir = void 0;
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const crypto = __importStar(require("crypto"));
@@ -153,3 +153,39 @@ function constructFileFromDiffArray(diffFileList, targetPath) {
     }
 }
 exports.constructFileFromDiffArray = constructFileFromDiffArray;
+function listFiles(dir, exludeDir) {
+    let files = [];
+    const dirContents = fs.readdirSync(dir);
+    dirContents.forEach(item => {
+        const itemPath = path.join(dir, item);
+        const stat = fs.statSync(itemPath);
+        if (stat.isDirectory()) {
+            if (item != exludeDir) {
+                files = files.concat(listFiles(itemPath, exludeDir));
+            }
+        }
+        else {
+            files.push(itemPath);
+        }
+    });
+    return files;
+}
+exports.listFiles = listFiles;
+function deleteDirectoriesExceptSync(dirToKeep) {
+    try {
+        const files = fs.readdirSync('.');
+        for (const file of files) {
+            const stats = fs.statSync(file);
+            if (stats.isDirectory() && file !== dirToKeep) {
+                console.log('removing following direcotry', file);
+                fs.rmSync(file, { recursive: true });
+                console.log(`Deleted directory: ${file}`);
+            }
+        }
+        console.log("All directories deleted except for the specified one.");
+    }
+    catch (error) {
+        console.error("Error occurred while deleting directories:", error);
+    }
+}
+exports.deleteDirectoriesExceptSync = deleteDirectoriesExceptSync;
