@@ -8,6 +8,7 @@ const addResource_1 = require("./commands/addResource");
 const createCommit_1 = require("./commands/createCommit");
 const viewLogs_1 = require("./commands/viewLogs");
 const revertCommit_1 = require("./commands/revertCommit");
+const checkout_1 = require("./commands/checkout");
 if (process.argv.length >= 3) {
     let command = process.argv[2];
     if (command == 'init') {
@@ -36,6 +37,20 @@ if (process.argv.length >= 3) {
         else {
             console.log('issue with input format');
         }
+    }
+    else if (command == 'checkout') {
+        (0, fileUtils_1.setCurrentDir)();
+        if (process.argv.length > 3) {
+            let targetBranch = process.argv[3];
+            let srcBranch = process.argv.length >= 5 ? process.argv[4] : 'main';
+            (0, checkout_1.checkoutBranch)(targetBranch, srcBranch);
+        }
+        else {
+            console.log('issue with input format');
+        }
+    }
+    else {
+        console.log('this command is not recognised');
     }
 }
 else {

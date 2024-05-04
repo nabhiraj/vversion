@@ -9,6 +9,7 @@ import {addResource} from './commands/addResource';
 import { createCommit } from './commands/createCommit';
 import { viewLogs } from './commands/viewLogs';
 import { revert } from './commands/revertCommit';
+import { checkoutBranch } from './commands/checkout';
 
 
 
@@ -34,6 +35,17 @@ if (process.argv.length >= 3){
         }else{
             console.log('issue with input format');
         }
+    }else if(command == 'checkout'){
+        setCurrentDir();
+        if(process.argv.length > 3 ){
+            let targetBranch = process.argv[3];
+            let srcBranch = process.argv.length >= 5? process.argv[4] : 'main';
+            checkoutBranch(targetBranch,srcBranch);
+        }else{
+            console.log('issue with input format');
+        }
+    }else{
+        console.log('this command is not recognised');
     }
 
 
