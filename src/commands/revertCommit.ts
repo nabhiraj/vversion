@@ -2,7 +2,7 @@ import { BranchManager } from "../BranchManager";
 import { listFiles,deleteDirectoriesExceptSync,constructFileFromDiffArray } from "../fileUtils";
 import * as fs from 'fs';
 
-export function revert(commitId:number){
+export function revert(commitId:string){
     let bm = new BranchManager();
     let branchInfo = bm.getBranchInfo();
     let enviomentList = branchInfo.commits.filter((x:any)=> x.commitVersion == commitId);

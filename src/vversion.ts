@@ -30,8 +30,8 @@ if (process.argv.length >= 3){
         viewLogs();
     }else if(command == 'revert'){
         setCurrentDir();
-        if(process.argv.length == 4 && !isNaN(parseInt(process.argv[3]))){
-            revert(parseInt(process.argv[3]));
+        if(process.argv.length == 4){
+            revert(process.argv[3]);
         }else{
             console.log('issue with input format');
         }

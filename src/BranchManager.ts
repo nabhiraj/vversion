@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import {getFileNameFromBranch,getJsonFromFile,createJsonFile,currentDir} from './fileUtils';
+import {getFileNameFromBranch,getJsonFromFile,createJsonFile,currentDir,getHashFromData} from './fileUtils';
 import { StageManager } from './StageManager';
 
 interface Data {
@@ -54,6 +54,17 @@ export class BranchManager {
         let index = this.getNextIndex();
         return this.getCurrentBranchName()+'_diff_'+index;
     }
+    
+    getNextCommitHash(state:any,branchInfo:any){
+        let data = '';
+        for(let key in state){
+            data += state[key].lastHash;
+        }
+        if (branchInfo.commits && branchInfo.commits.length > 0){
+            data += branchInfo.commits[branchInfo.commits.length - 1].commitVersion;
+        }
+        return getHashFromData(data);
+    }
 
     createCommit(commitMessage = 'default commit message'){
         let sm = new StageManager();
@@ -71,7 +82,7 @@ export class BranchManager {
         }
         let branchInfo = this.getBranchInfo();
         let lastCommit = {
-            "commitVersion": this.getNextIndex(),
+            "commitVersion": this.getNextCommitHash(sm,branchInfo),
             "commitMessage": commitMessage,
             "files": state
         };

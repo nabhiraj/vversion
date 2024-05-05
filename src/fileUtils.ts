@@ -65,6 +65,12 @@ export function getHash(filePath: string): string {
     return hash.digest('hex');
 }
 
+export function getHashFromData(data:string){
+    const hash = crypto.createHash('md5');
+    hash.update(data);
+    return hash.digest('hex');
+}
+
 export function createDiffFile(initialFilePath:string|null,changedFilePath:string,targetFilePath:string){
     let tempFileName: string | null = null;
     if (initialFilePath === null) {
