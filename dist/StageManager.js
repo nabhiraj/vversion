@@ -60,6 +60,14 @@ class StageManager {
     getState() {
         return this.state;
     }
+    isChanged() {
+        for (let key in this.state) {
+            if (this.state[key].stageDiff && this.state[key].stageDiff.length) {
+                return true;
+            }
+        }
+        return false;
+    }
     initStage() {
         if (fs.existsSync(this.statePath)) {
             this.state = (0, fileUtils_1.getJsonFromFile)(this.statePath);

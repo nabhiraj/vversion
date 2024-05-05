@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteDirectoriesExceptSync = exports.listFiles = exports.constructFileFromDiffArray = exports.addDiffFile = exports.createDiffFile = exports.getHash = exports.createJsonFile = exports.getJsonFromFile = exports.getFileNameFromBranch = exports.setCurrentDir = exports.getStartingDirectory = exports.currentDir = void 0;
+exports.deleteDirectoriesExceptSync = exports.listFiles = exports.constructFileFromDiffArray = exports.addDiffFile = exports.createDiffFile = exports.getHashFromData = exports.getHash = exports.createJsonFile = exports.getJsonFromFile = exports.getFileNameFromBranch = exports.setCurrentDir = exports.getStartingDirectory = exports.currentDir = void 0;
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const crypto = __importStar(require("crypto"));
@@ -94,6 +94,12 @@ function getHash(filePath) {
     return hash.digest('hex');
 }
 exports.getHash = getHash;
+function getHashFromData(data) {
+    const hash = crypto.createHash('md5');
+    hash.update(data);
+    return hash.digest('hex');
+}
+exports.getHashFromData = getHashFromData;
 function createDiffFile(initialFilePath, changedFilePath, targetFilePath) {
     let tempFileName = null;
     if (initialFilePath === null) {

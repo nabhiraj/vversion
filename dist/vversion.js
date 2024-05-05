@@ -31,8 +31,8 @@ if (process.argv.length >= 3) {
     }
     else if (command == 'revert') {
         (0, fileUtils_1.setCurrentDir)();
-        if (process.argv.length == 4 && !isNaN(parseInt(process.argv[3]))) {
-            (0, revertCommit_1.revert)(parseInt(process.argv[3]));
+        if (process.argv.length == 4) {
+            (0, revertCommit_1.revert)(process.argv[3]);
         }
         else {
             console.log('issue with input format');

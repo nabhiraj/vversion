@@ -66,9 +66,23 @@ class BranchManager {
         let index = this.getNextIndex();
         return this.getCurrentBranchName() + '_diff_' + index;
     }
+    getNextCommitHash(state, branchInfo) {
+        let data = '';
+        for (let key in state) {
+            data += state[key].lastHash;
+        }
+        if (branchInfo.commits && branchInfo.commits.length > 0) {
+            data += branchInfo.commits[branchInfo.commits.length - 1].commitVersion;
+        }
+        return (0, fileUtils_1.getHashFromData)(data);
+    }
     createCommit(commitMessage = 'default commit message') {
         let sm = new StageManager_1.StageManager();
         sm.initStage();
+        if (!sm.isChanged()) {
+            console.log('no change staged which can be commited');
+            return false;
+        }
         let state = sm.getStateCopy();
         for (let key in state) {
             if (state[key].stageDiff.length > 0) {
@@ -78,7 +92,7 @@ class BranchManager {
         }
         let branchInfo = this.getBranchInfo();
         let lastCommit = {
-            "commitVersion": this.getNextIndex(),
+            "commitVersion": this.getNextCommitHash(sm, branchInfo),
             "commitMessage": commitMessage,
             "files": state
         };
@@ -90,6 +104,7 @@ class BranchManager {
         }
         sm.setState(newState);
         sm.flushState();
+        return true;
     }
 }
 exports.BranchManager = BranchManager;
