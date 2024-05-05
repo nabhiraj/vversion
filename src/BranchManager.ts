@@ -58,6 +58,10 @@ export class BranchManager {
     createCommit(commitMessage = 'default commit message'){
         let sm = new StageManager();
         sm.initStage();
+        if(!sm.isChanged()){
+            console.log('no change staged which can be commited');
+            return false;
+        }
         let state = sm.getStateCopy();
         for (let key in state){
             if(state[key].stageDiff.length > 0){
@@ -79,6 +83,7 @@ export class BranchManager {
         }
         sm.setState(newState);
         sm.flushState();
+        return true;
     }
 
 }
