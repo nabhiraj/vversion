@@ -18,6 +18,7 @@ export function revert(commitId:string){
             let diffsPathList = selectedEnv[filePath].diffs.map((x:any) => './.vversion/'+x);
             constructFileFromDiffArray(diffsPathList,filePath);
         }
+        //we need to create the new stage env.
     }else{
         console.log('required commit id not found in branch info');
     }

@@ -10,6 +10,7 @@ import { createCommit } from './commands/createCommit';
 import { viewLogs } from './commands/viewLogs';
 import { revert } from './commands/revertCommit';
 import { checkoutBranch } from './commands/checkout';
+import { merge } from './commands/mergeLogic';
 
 
 
@@ -43,6 +44,13 @@ if (process.argv.length >= 3){
             checkoutBranch(targetBranch,srcBranch);
         }else{
             console.log('issue with input format');
+        }
+    }else if(command == 'merge'){
+        setCurrentDir();
+        if(process.argv.length == 4){
+            merge(process.argv[3]);
+        }else{
+            console.log('format of the input is wrong');
         }
     }else{
         console.log('this command is not recognised');
