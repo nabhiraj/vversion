@@ -48,24 +48,33 @@ export function merge(sourceBranch:string){
     let targetCommitList = targetBranchInfo.commits;
     let sourceCommitList = sourceBranchInfo.commits;
     let lastCommonCommitAncestorIndex = -1;
+    //console.log('the target commit list is ',targetCommitList.map((x:any)=>x.commitVersion));
+    //console.log('source commit  list is ',sourceCommitList.map((x:any)=>x.commitVersion))
 
-
-    //this part needs to be fixed
-    for(let i=0;i<targetCommitList.length && i < sourceCommitList.length;i++){
-        if(targetCommitList[i].commitVersion != sourceCommitList[i].commitVersion){
-            compareMergeConflict = true; //if this is true that means target branch is ahead of source branch.
-            break;
-        }else{
-            lastCommonCommitAncestorIndex = i;
+    if (targetCommitList.length <= sourceCommitList.length){
+        for(let i=0;i<targetCommitList.length;i++){
+            if(targetCommitList[i].commitVersion != sourceCommitList[i].commitVersion){
+                compareMergeConflict = true;
+                break;
+            }else{
+                lastCommonCommitAncestorIndex = i;
+            }
         }
+    }else{
+        for(let i=0;i<sourceCommitList.length;i++){
+            if(targetCommitList[i].commitVersion == sourceCommitList[i].commitVersion){
+                lastCommonCommitAncestorIndex = i;
+            }else{
+                break;
+            }
+        }
+        compareMergeConflict = true;
     }
-  
     
 
     let lastSourceCommit  = sourceCommitList[sourceCommitList.length-1];
     if(compareMergeConflict){
-        console.log('this part is not implemented yet!!');
-        console.log('the index value is ',lastCommonCommitAncestorIndex);
+        //control is not going inside this part.
         let commanFiles = sourceCommitList[lastCommonCommitAncestorIndex].files;
         let targetFiles = targetCommitList[targetCommitList.length - 1].files;
         let sourceFiles = lastSourceCommit.files;
@@ -81,14 +90,13 @@ export function merge(sourceBranch:string){
                 ) 
             
             ){
-                console.log('there is a merge conflict');
+                console.log('there is a merge conflict in ',path);
                 return false;
             }
         }
         for(const path in targetFiles){
             if (!lastSourceCommit.files[path] && !commanFiles[path]){
                 lastSourceCommit.files[path] = targetFiles[path];
-                console.log('adding the file ',path,' from target');
             }
         }
     }
