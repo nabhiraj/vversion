@@ -31,23 +31,6 @@ class StageManager {
     constructor() {
         this.statePath = './.vversion/state.json';
     }
-    /*
-    listFiles(dir: string,exludeDir:string): string[] {
-        let files: string[] = [];
-        const dirContents = fs.readdirSync(dir);
-        dirContents.forEach(item => {
-            const itemPath = path.join(dir, item);
-            const stat = fs.statSync(itemPath);
-            if (stat.isDirectory()) {
-                if(item != exludeDir){
-                    files = files.concat(this.listFiles(itemPath,exludeDir));
-                }
-            } else {
-                files.push(itemPath);
-            }
-        });
-        return files;
-    }*/
     setState(state) {
         this.state = state;
     }
@@ -145,6 +128,16 @@ class StageManager {
             }
             return false;
         }
+    }
+    resetStage() {
+        let bm = new BranchManager_1.BranchManager();
+        let branchInfo = bm.getBranchInfo();
+        let lastCommitFiles = branchInfo.commits[branchInfo.commits.length - 1].files;
+        this.state = JSON.parse(JSON.stringify(lastCommitFiles));
+        for (const path in this.state) {
+            this.state[path].stageDiff = [];
+        }
+        this.flushState();
     }
 }
 exports.StageManager = StageManager;

@@ -9,6 +9,7 @@ const createCommit_1 = require("./commands/createCommit");
 const viewLogs_1 = require("./commands/viewLogs");
 const revertCommit_1 = require("./commands/revertCommit");
 const checkout_1 = require("./commands/checkout");
+const mergeLogic_1 = require("./commands/mergeLogic");
 if (process.argv.length >= 3) {
     let command = process.argv[2];
     if (command == 'init') {
@@ -47,6 +48,15 @@ if (process.argv.length >= 3) {
         }
         else {
             console.log('issue with input format');
+        }
+    }
+    else if (command == 'merge') {
+        (0, fileUtils_1.setCurrentDir)();
+        if (process.argv.length == 4) {
+            (0, mergeLogic_1.merge)(process.argv[3]);
+        }
+        else {
+            console.log('format of the input is wrong');
         }
     }
     else {
